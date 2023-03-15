@@ -10,8 +10,6 @@ base_url = f"{vars.serverURI}/kandle/server.php"
 
 def getLinks():
     try:
-
-       
         response = requests.get(
             f'{base_url}?get-links=1')
         return response.json()

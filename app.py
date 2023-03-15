@@ -1,8 +1,8 @@
 from scrapper import Parasite
 from server import getChilds, getLinks, saveOnServer
 import time
-from vars import production
-import os
+# from vars import production
+# import os
 from renamer import Renamer
 from vars import loading
 count = 0

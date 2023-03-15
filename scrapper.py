@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 from bs4 import BeautifulSoup
 import replies
@@ -81,7 +83,7 @@ class Parasite:
         self.bot.close()
 
     def CrackedMindBot(self, url, open_only_browser=False):
-
+        print('url_______',  url)
         if open_only_browser == True:
             self.OpenOnlyInBrowser(url)
             self.end_url = replies.on_browser_open_request
@@ -114,24 +116,42 @@ class Parasite:
         # time.sleep(page_load_time)
         self.retries = 0
         try:
-            page_source = self.bot.page_source
-            html = BeautifulSoup(page_source, 'html.parser')
             anchor = ''
-            try:
-                html.select(
-                    '.inline-width.pad-b-40.width-100per.single-download-content')
-                html.select('.file-download')
-                anchor = html.select(
-                    '.btn.btn-lg.btn-success.btn-block.btn-download')
-                anchor = anchor[0].get('href')
-            except:
-                pass
+            page_source = self.bot.page_source
+            if 'https://samfw.com/' in self.url:
+                btn = self.bot.find_element(By.CSS_SELECTOR, '#downloadfyd_button')
+                action = ActionChains(self.bot)
+                action.move_to_element(btn).click().perform()
+                print('waiting...5sec')
+                time.sleep(10)
+                try:
+                    down = self.bot.find_element(By.XPATH, '/html/body/div[3]/div/div/div/div[4]/div[2]/div[4]/div[1]/div[2]/div/div[1]/div/a')
+                    link = down.get_attribute('href')
+                    print('ouput link -----------------------....')
+                    link = link.split('?id=')[1]
+                    link = link.split('&export=')[0]
+                    anchor = 'https://drive.google.com/file/d/'+link+'/view'
+                except Exception as e:
+                    print('button url not fetched....')
+                    print(e)
+            else:
+                html = BeautifulSoup(page_source, 'html.parser')
+                try:
+                    html.select(
+                        '.inline-width.pad-b-40.width-100per.single-download-content')
+                    html.select('.file-download')
+                    anchor = html.select(
+                        '.btn.btn-lg.btn-success.btn-block.btn-download')
+                    anchor = anchor[0].get('href')
+                except:
+                    pass
 
             if 'utoken' in anchor or 'vtoken' in anchor:
                 try:
-                    self.bot.get(anchor)
-                    time.sleep(1)
-                    anchor = self.bot.current_url
+                    if 'https://samfw.com/' not in self.url:
+                        self.bot.get(anchor)
+                        time.sleep(1)
+                        anchor = self.bot.current_url
                     if 'https://drive.google.com/' in anchor or 'https://mega.nz/file' in anchor:
                         self.end_url = anchor
                         # self.bot.close()
